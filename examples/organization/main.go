@@ -13,5 +13,10 @@ func main() {
 	slabToken := os.Getenv("SLAB_TOKEN")
 	c := slab.NewClient(&http.Client{Timeout: time.Duration(10 * time.Second)}, slabToken)
 	o, err := c.Organization.Get()
-	fmt.Printf("Org: %#v\nErr: %s\n", o, err)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("My organization's name is %s and its id is: %s\nTo connect to slab I go to: https://%s\n", o.Name, o.ID, o.Host)
+	fmt.Printf("There are %d posts and %d topics available in my organization.\n", len(*o.Posts), len(*o.Topics))
+	fmt.Printf("Currently %d users are attached to my organization.\n", len(*o.Users))
 }
