@@ -12,9 +12,9 @@ type Organization struct {
 	ID         string    `json:"id"`
 	Host       string    `json:"host"`
 	Name       string    `json:"name"`
-	Posts      []Post    `json:"posts"`
-	Topics     []Topic   `json:"topics"`
-	Users      []User    `json:"users"`
+	Posts      *[]Post   `json:"posts"`
+	Topics     *[]Topic  `json:"topics"`
+	Users      *[]User   `json:"users"`
 	InsertedAt *DateTime `json:"insertedAt"`
 	UpdatedAt  *DateTime `json:"updatedAt"`
 }
