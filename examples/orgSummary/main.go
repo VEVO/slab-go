@@ -1,3 +1,6 @@
+// The orgSummary command shows how to retrieve the details of your organization
+// from the slab.com API.
+// The token is expected to be located in and environment variable called `SLAB_TOKEN`
 package main
 
 import (
