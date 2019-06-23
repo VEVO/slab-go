@@ -2,7 +2,7 @@ package slab
 
 import "time"
 
-// Post represent the structure of a post
+// Post represent the structure of a post.
 type Post struct {
 	ID          string     `json:"id"`
 	Name        string     `json:"name"`

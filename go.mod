@@ -1,6 +1,7 @@
 module github.com/aerostitch/slab-go
 
 require (
-	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f
-	golang.org/x/net v0.0.0-20190620200207-3b0461eec859 // indirect
+	github.com/machinebox/graphql v0.2.2
+	github.com/matryer/is v1.2.0 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 )

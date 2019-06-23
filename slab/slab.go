@@ -1,12 +1,12 @@
-// This code is inspired by https://github.com/shurcooL/githubv4/blob/master/githubv4.go
-
 package slab
 
 import (
 	"context"
 	"net/http"
+	"strconv"
+	"time"
 
-	"github.com/shurcooL/graphql"
+	"github.com/machinebox/graphql"
 )
 
 const apiEndpoint = "https://api.slab.com/v1/graphql"
@@ -16,33 +16,57 @@ type Client struct {
 	client *graphql.Client
 	// APIToken is the authentication token to use when talking to the slab API
 	APIToken string
+
+	common       service
+	Organization *OrganizationService
 }
 
 // NewClient creates a new slab client with the provided http.Client.
 // If httpClient is nil, then http.DefaultClient is used.
 func NewClient(httpClient *http.Client, apiToken string) *Client {
-	return &Client{
-		client:   graphql.NewClient(apiEndpoint, httpClient),
+	c := &Client{
+		client:   graphql.NewClient(apiEndpoint, graphql.WithHTTPClient(httpClient)),
 		APIToken: apiToken,
 	}
+	// For debugging
+	//c.client.Log = func(s string) { log.Println(s) }
+	c.common.client = c
+	c.Organization = (*OrganizationService)(&c.common)
+
+	return c
 }
 
-// Query executes a single GraphQL query request,
-// with a query derived from q, populating the response into it.
-// q should be a pointer to struct that corresponds to the GraphQL schema.
-func (c *Client) Query(ctx context.Context, q interface{}, variables map[string]interface{}) error {
-	return c.client.Query(ctx, q, variables)
+type service struct {
+	client *Client
 }
 
-// Mutate executes a single GraphQL mutation request,
-// with a mutation derived from m, populating the response into it.
-// m should be a pointer to struct that corresponds to the GraphQL schema.
-// Provided input will be set as a variable named "input".
-func (c *Client) Mutate(ctx context.Context, m interface{}, input Input, variables map[string]interface{}) error {
-	if variables == nil {
-		variables = map[string]interface{}{"input": input}
-	} else {
-		variables["input"] = input
+// Do executes the given query and populates the resp struct
+func (c *Client) Do(ctx context.Context, query string, resp interface{}) error {
+	req := graphql.NewRequest(query)
+	req.Header.Set("Authorization", c.APIToken)
+	if err := c.client.Run(ctx, req, resp); err != nil {
+		return err
 	}
-	return c.client.Mutate(ctx, m, variables)
+	return nil
+}
+
+// DateTime is a struct that allow us to unmarshal the RFC3339 date formats
+type DateTime struct {
+	time.Time
+}
+
+func (t DateTime) String() string {
+	return t.Time.String()
+}
+
+// UnmarshalJSON is used to unmarshal the date to json
+func (t *DateTime) UnmarshalJSON(data []byte) (err error) {
+	str := string(data)
+	i, err := strconv.ParseInt(str, 10, 64)
+	if err == nil {
+		t.Time = time.Unix(i, 0)
+	} else {
+		t.Time, err = time.Parse(`"`+time.RFC3339+`"`, str)
+	}
+	return
 }
