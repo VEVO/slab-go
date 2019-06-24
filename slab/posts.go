@@ -163,10 +163,17 @@ func (p *PostService) Sync(externalID, content, editURL, readURL, format string)
 }
 
 // AddTopic attaches a given topic to a given post
+//
+// Note that this is calling `Topic.AddToPost` and is only put here for convenience
 func (p *PostService) AddTopic(postID, topicID string) error {
-	query := `mutation($postId: ID!, $topicId: ID!){ addTopicToPost(postId: $postId, topicId: $topicId){ id } }`
-	var resp map[string]interface{}
-	vars := map[string]interface{}{"postId": postID, "topicId": topicID}
-	err := p.client.Do(context.Background(), query, vars, &resp)
+	_, err := p.client.Topic.AddToPost(topicID, postID)
+	return err
+}
+
+// RemoveTopic detaches a given topic to a given post
+//
+// Note that this is calling `Topic.RemoveFromPost` and is only put here for convenience
+func (p *PostService) RemoveTopic(postID, topicID string) error {
+	_, err := p.client.Topic.RemoveFromPost(topicID, postID)
 	return err
 }
