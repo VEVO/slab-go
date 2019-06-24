@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	topicID := os.Getenv("SLAB_TOPIC_ID")
 	slabToken := os.Getenv("SLAB_TOKEN")
 	c := slab.NewClient(&http.Client{Timeout: time.Duration(10 * time.Second)}, slabToken)
 
@@ -30,4 +31,10 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("Post id is: %s\nPost title is: %s\nPost content is:\n%s\nPost version: %d\n", p.ID, p.Title, *p.Content, *p.Version)
+
+	if topicID != "" {
+		if err := c.Post.AddTopic(p.ID, topicID); err != nil {
+			panic(err)
+		}
+	}
 }

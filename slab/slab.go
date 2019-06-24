@@ -20,6 +20,7 @@ type Client struct {
 	common       service
 	Organization *OrganizationService
 	Post         *PostService
+	Topic        *TopicService
 }
 
 // NewClient creates a new slab client with the provided http.Client.
@@ -30,10 +31,11 @@ func NewClient(httpClient *http.Client, apiToken string) *Client {
 		APIToken: apiToken,
 	}
 	// For debugging
-	// c.client.Log = func(s string) { log.Println(s) }
+	//c.client.Log = func(s string) { log.Println(s) }
 	c.common.client = c
 	c.Organization = (*OrganizationService)(&c.common)
 	c.Post = (*PostService)(&c.common)
+	c.Topic = (*TopicService)(&c.common)
 
 	return c
 }

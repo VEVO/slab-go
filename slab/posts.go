@@ -155,3 +155,12 @@ func (p *PostService) Sync(externalID, content, editURL, readURL, format string)
 	err := p.client.Do(context.Background(), query, vars, &resp)
 	return resp.Post, err
 }
+
+// AddTopic attaches a given topic to a given post
+func (p *PostService) AddTopic(postID, topicID string) error {
+	query := `mutation($postId: ID!, $topicId: ID!){ addTopicToPost(postId: $postId, topicId: $topicId){ id } }`
+	var resp map[string]interface{}
+	vars := map[string]interface{}{"postId": postID, "topicId": topicID}
+	err := p.client.Do(context.Background(), query, vars, &resp)
+	return err
+}
