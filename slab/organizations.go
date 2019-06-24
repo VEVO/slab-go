@@ -38,7 +38,7 @@ func (o *OrganizationService) Get() (*Organization, error) {
 	var resp struct {
 		Organization *Organization `json:"organization"`
 	}
-	if err := o.client.Do(context.Background(), query, &resp); err != nil {
+	if err := o.client.Do(context.Background(), query, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp.Organization, nil

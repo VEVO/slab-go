@@ -30,7 +30,7 @@ func NewClient(httpClient *http.Client, apiToken string) *Client {
 		APIToken: apiToken,
 	}
 	// For debugging
-	//c.client.Log = func(s string) { log.Println(s) }
+	// c.client.Log = func(s string) { log.Println(s) }
 	c.common.client = c
 	c.Organization = (*OrganizationService)(&c.common)
 	c.Post = (*PostService)(&c.common)
@@ -42,10 +42,16 @@ type service struct {
 	client *Client
 }
 
-// Do executes the given query and populates the resp struct
-func (c *Client) Do(ctx context.Context, query string, resp interface{}) error {
+// Do executes the given query and populates the resp struct.
+// `graphqlVars` is a map of the graphql variables to pass to the query.
+func (c *Client) Do(ctx context.Context, query string, graphqlVars map[string]interface{}, resp interface{}) error {
 	req := graphql.NewRequest(query)
 	req.Header.Set("Authorization", c.APIToken)
+
+	for k, v := range graphqlVars {
+		req.Var(k, v)
+	}
+
 	if err := c.client.Run(ctx, req, resp); err != nil {
 		return err
 	}
