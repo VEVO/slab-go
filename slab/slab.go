@@ -9,7 +9,8 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-const apiEndpoint = "https://api.slab.com/v1/graphql"
+// apiEndpoint is a var and not a constant to permit easier testing
+var apiEndpoint = "https://api.slab.com/v1/graphql"
 
 // Client is the client used for the graphql api
 type Client struct {
@@ -31,7 +32,7 @@ func NewClient(httpClient *http.Client, apiToken string) *Client {
 		APIToken: apiToken,
 	}
 	// For debugging
-	//c.client.Log = func(s string) { log.Println(s) }
+	// c.client.Log = func(s string) { log.Println(s) }
 	c.common.client = c
 	c.Organization = (*OrganizationService)(&c.common)
 	c.Post = (*PostService)(&c.common)
