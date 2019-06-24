@@ -9,7 +9,9 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-// apiEndpoint is a var and not a constant to permit easier testing
+// apiEndpoint is a var and not a constant to permit easier testing.
+// But we should be able to have that fixed if upstream accepts
+// https://github.com/machinebox/graphql/pull/38
 var apiEndpoint = "https://api.slab.com/v1/graphql"
 
 // Client is the client used for the graphql api
