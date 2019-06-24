@@ -69,5 +69,52 @@ func (p *TopicService) Get(id string) (*Topic, error) {
 	vars := map[string]interface{}{"id": id}
 	err := p.client.Do(context.Background(), query, vars, &resp)
 	return resp.Topic, err
+}
 
+// Create inserts a new topic in slab
+func (p *TopicService) Create(name, description, parentID string) (*Topic, error) {
+	query := `
+	mutation (
+		$name: String!,
+		$description: String,
+		$parentId: ID
+	){
+		createTopic(
+			name: $name, description: $description, parentId: $parentId
+		){ id, name, description }
+	}`
+	var resp struct {
+		Topic *Topic `json:"createTopic"`
+	}
+	vars := map[string]interface{}{"name": name, "description": description, "parentId": parentID}
+	err := p.client.Do(context.Background(), query, vars, &resp)
+	return resp.Topic, err
+}
+
+// AddToPost attaches a topic to a post
+func (p *TopicService) AddToPost(topicID, postID string) (*Topic, error) {
+	query := `
+	mutation($postId: ID!, $topicId: ID!){
+		addTopicToPost(postId: $postId, topicId: $topicId){ id, name, description }
+	}`
+	var resp struct {
+		Topic *Topic `json:"addTopicToPost"`
+	}
+	vars := map[string]interface{}{"postId": postID, "topicId": topicID}
+	err := p.client.Do(context.Background(), query, vars, &resp)
+	return resp.Topic, err
+}
+
+// RemoveFromPost detaches a topic from a post
+func (p *TopicService) RemoveFromPost(topicID, postID string) (*Topic, error) {
+	query := `
+	mutation($postId: ID!, $topicId: ID!){
+		removeTopicFromPost(postId: $postId, topicId: $topicId){ id, name, description }
+	}`
+	var resp struct {
+		Topic *Topic `json:"removeTopicFromPost"`
+	}
+	vars := map[string]interface{}{"postId": postID, "topicId": topicID}
+	err := p.client.Do(context.Background(), query, vars, &resp)
+	return resp.Topic, err
 }

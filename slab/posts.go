@@ -91,7 +91,7 @@ func (p *PostService) Update(id, content string, published bool) (*Post, error) 
 		}
 	}`
 	var resp struct {
-		Post *Post `json:"post"`
+		Post *Post `json:"updatePost"`
 	}
 	vars := map[string]interface{}{"id": id, "content": content, "published": published}
 	err := p.client.Do(context.Background(), query, vars, &resp)
@@ -102,7 +102,7 @@ func (p *PostService) Update(id, content string, published bool) (*Post, error) 
 func (p *PostService) Delete(id, externalID string) (*Post, error) {
 	query := `mutation($id: ID, $externalId: ID){ deletePost(id: $id, externalId: $externalId){ id } }`
 	var resp struct {
-		Post *Post `json:"post"`
+		Post *Post `json:"deletePost"`
 	}
 	vars := make(map[string]interface{})
 	if id != "" {
