@@ -119,8 +119,8 @@ func (p *PostService) Delete(id, externalID string) (*Post, error) {
 // at least the editUrl must be supplied. If no readUrl is supplied upon creation, the editUrl is used.
 //
 // To clarify:
-// * `externalID` is the identifier that identifies your post and that you will use, for example, when you want to delete
-//   the post.
+// * `externalID` is the identifier that identifies your post and that you will use, for example,
+//   when you want to delete the post.
 // * `editUR`L is the url you will be redirected to when you hit the "Edit Post" button in the slab UI.
 // * currently accepted `format` fields are `HTML` or `MARKDOWN`.
 func (p *PostService) Sync(externalID, content, editURL, readURL, format string) (*Post, error) {
@@ -151,7 +151,13 @@ func (p *PostService) Sync(externalID, content, editURL, readURL, format string)
 	var resp struct {
 		Post *Post `json:"syncPost"`
 	}
-	vars := map[string]interface{}{"content": content, "editUrl": editURL, "externalId": externalID, "format": format, "readUrl": readURL}
+	vars := map[string]interface{}{
+		"content":    content,
+		"editUrl":    editURL,
+		"externalId": externalID,
+		"format":     format,
+		"readUrl":    readURL,
+	}
 	err := p.client.Do(context.Background(), query, vars, &resp)
 	return resp.Post, err
 }
