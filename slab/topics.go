@@ -12,7 +12,7 @@ type Topic struct {
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	Posts       []Post    `json:"posts"`
+	Posts       *[]Post   `json:"posts"`
 	Hierarchy   *[]string `json:"hierarchy"`
 	Parent      *Topic    `json:"parent,omitempty"`
 	Ancestors   *[]Topic  `json:"ancestors"`
