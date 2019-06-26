@@ -20,7 +20,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/aerostitch/slab-go/slab"
+	"github.com/VEVO/slab-go/slab"
 )
 
 var c *slab.Client

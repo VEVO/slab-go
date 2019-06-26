@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/aerostitch/slab-go/slab"
+	"github.com/VEVO/slab-go/slab"
 )
 
 func main() {

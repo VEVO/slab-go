@@ -10,7 +10,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/aerostitch/slab-go/slab"
+	"github.com/VEVO/slab-go/slab"
 )
 
 func main() {
@@ -19,14 +19,14 @@ func main() {
 	c := slab.NewClient(&http.Client{Timeout: time.Duration(10 * time.Second)}, slabToken)
 
 	// Pulling some content from a url just to have an example
-	resp, err := http.Get("https://raw.githubusercontent.com/aerostitch/slab-go/master/README.md")
+	resp, err := http.Get("https://raw.githubusercontent.com/VEVO/slab-go/master/README.md")
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
-	p, err := c.Post.Sync("slabgoREADME", string(body), "https://github.com/aerostitch/slab-go/blob/master/README.md", "https://github.com/aerostitch/slab-go/blob/master/README.md", "MARKDOWN")
+	p, err := c.Post.Sync("slabgoREADME", string(body), "https://github.com/VEVO/slab-go/blob/master/README.md", "https://github.com/VEVO/slab-go/blob/master/README.md", "MARKDOWN")
 	if err != nil {
 		panic(err)
 	}

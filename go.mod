@@ -1,4 +1,4 @@
-module github.com/aerostitch/slab-go
+module github.com/VEVO/slab-go
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
