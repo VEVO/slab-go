@@ -62,7 +62,7 @@ func (p *PostService) Get(id string) (*Post, error) {
 
 }
 
-// Ceate creates an empty post in slab and attaches it to a topic
+// Create creates a new blank post, optionally organized in given topicId.
 func (p *PostService) Create(topicID string) (*Post, error) {
 	query := `mutation ($topicId: ID){ createPost(topicId: $topicId){ id } }`
 	var resp struct {
