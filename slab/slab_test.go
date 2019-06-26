@@ -24,7 +24,8 @@ func setup(t *testing.T, response string) (c *Client, mux *http.ServeMux, teardo
 		testMethod(t, r, "POST")
 		_, err := ioutil.ReadAll(r.Body)
 		assert.NoError(t, err)
-		io.WriteString(w, response)
+		_, err = io.WriteString(w, response)
+		assert.NoError(t, err)
 	})
 
 	// srv is the test server that will serve the endpoints
