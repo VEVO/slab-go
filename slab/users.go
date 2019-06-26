@@ -14,9 +14,9 @@ type User struct {
 	Title         string    `json:"title"`
 	Type          string    `json:"type"`
 	Avatar        *Image    `json:"avatar,omitempty"`
-	InsertedAt    *DateTime `json:"insertedAt"`
-	UpdatedAt     *DateTime `json:"updatedAt"`
-	DeactivatedAt *DateTime `json:"deactivatedAt"`
+	InsertedAt    *DateTime `json:"insertedAt,omitempty"`
+	UpdatedAt     *DateTime `json:"updatedAt,omitempty"`
+	DeactivatedAt *DateTime `json:"deactivatedAt,omitempty"`
 }
 
 // Image is the type of the avatar which is a url to the avatar if any
