@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Post id is: %s\nPost title is: %s\nPost content is:\n%s\nPost version: %d\n", p.ID, p.Title, *p.Content, *p.Version)
+	fmt.Printf("Post id is: %s\nPost title is: %s\nPost content is:\n%s\nPost version: %d\n", p.ID, p.Title, *p.Content, p.Version)
 
 	if topicID != "" {
 		if err := c.Post.AddTopic(p.ID, topicID); err != nil {

@@ -12,7 +12,8 @@ type Post struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
 	Content     *string   `json:"content,omitempty"`
-	Version     *int      `json:"version,omitempty"`
+	Version     int       `json:"version,omitempty"`
+	InsertedAt  *DateTime `json:"insertedAt,omitempty"`
 	PublishedAt *DateTime `json:"publishedAt,omitempty"`
 	UpdatedAt   *DateTime `json:"updatedAt,omitempty"`
 }
