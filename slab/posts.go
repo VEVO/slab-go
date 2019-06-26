@@ -67,7 +67,7 @@ func (p *PostService) Get(id string) (*Post, error) {
 func (p *PostService) Create(topicID string) (*Post, error) {
 	query := `mutation ($topicId: ID){ createPost(topicId: $topicId){ id } }`
 	var resp struct {
-		Post *Post `json:"post"`
+		Post *Post `json:"createPost"`
 	}
 	vars := map[string]interface{}{"topicId": topicID}
 	err := p.client.Do(context.Background(), query, vars, &resp)
