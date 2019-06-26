@@ -62,19 +62,19 @@ func (p *PostService) Get(id string) (*Post, error) {
 
 }
 
-// Create inserts a new post in slab inside a given topic but will keep it as unpublished
-func (p *PostService) Create(postObj *Post, topicID string) (*Post, error) {
-	// The createPost only creates an empty post so we need to do it in 2 steps: create and update
+// Ceate creates an empty post in slab and attaches it to a topic
+func (p *PostService) Create(topicID string) (*Post, error) {
 	query := `mutation ($topicId: ID){ createPost(topicId: $topicId){ id } }`
 	var resp struct {
 		Post *Post `json:"post"`
 	}
 	vars := map[string]interface{}{"topicId": topicID}
-	if err := p.client.Do(context.Background(), query, vars, &resp); err != nil {
-		return nil, err
-	}
-	return p.Update(resp.Post.ID, *postObj.Content, false)
+	err := p.client.Do(context.Background(), query, vars, &resp)
+	return resp.Post, err
 }
+
+/*
+updatePost has been disabled for now by the slab team. They're rewriting it so disabling that for now.
 
 // Update changes the post to match the one given in parameter and/or its publication state.
 // The content parameter should be a field that matches
@@ -97,6 +97,7 @@ func (p *PostService) Update(id, content string, published bool) (*Post, error) 
 	err := p.client.Do(context.Background(), query, vars, &resp)
 	return resp.Post, err
 }
+*/
 
 // Delete deletes a post with given id or externalID. At least one must be supplied. If both are, id is used.
 func (p *PostService) Delete(id, externalID string) (*Post, error) {
