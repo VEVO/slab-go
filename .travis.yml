@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - 1.x
+
+env:
+  global:
+    - GO111MODULE=on
+
+script:
+  - diff -u <(echo -n) <(gofmt -d -s .)
+  - go vet -mod=readonly ./...
+  - go test -mod=readonly -v -race ./...
