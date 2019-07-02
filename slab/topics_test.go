@@ -2,9 +2,15 @@ package slab
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTopicService_List(t *testing.T) {
@@ -150,5 +156,66 @@ func TestRemoveFromPost(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("RemoveFromPost returned: %#v\nwant %#v", got, want)
+	}
+}
+
+func TestTopicService_AutoGenerate_NoCreate(t *testing.T) {
+	want := "def456"
+	expectedResp := `{"data":{"organization":{"topics": [
+	            { "parent": null, "name": "Company", "id": "abc123", "children": [] },
+	            { "parent": null, "name": "Engineering", "id": "bcd234", "children": [{"id": "bcd234", "name": "Services"}] },
+	            { "parent": {"id": "bcd234"}, "name": "Services", "id": "cde345", "children": [{"id": "def456", "name": "App 1"}] },
+	            { "parent": {"id": "cde345"}, "name": "App 1", "id": "def456", "children": [] }
+            ]}}}`
+	c, _, teardown := setup(t, expectedResp)
+	defer teardown()
+
+	got, err := c.Topic.AutoGenerate("Engineering/Services/App 1", "/")
+	if err != nil {
+		t.Errorf("Expecting no error, got: %v", err)
+	}
+	if got != want {
+		t.Errorf("List returned: %s\nwant %s", got, want)
+	}
+}
+
+func TestTopicService_AutoGenerate_Create(t *testing.T) {
+	// This test is a bit more complex as there are multiple calls and we cannot change the apiEndpoint for now due to upstream not exposing it
+	callNbr := 0
+	expectedResponses := []string{
+		`{"data":{"organization":{"topics": [
+	            { "parent": null, "name": "Company", "id": "abc123", "children": [] },
+	            { "parent": null, "name": "Engineering", "id": "bcd234", "children": [{"id": "bcd234", "name": "Services"}] },
+	            { "parent": {"id": "bcd234"}, "name": "Services", "id": "cde345", "children": [{"id": "def456", "name": "App 1"}] },
+	            { "parent": {"id": "cde345"}, "name": "App 1", "id": "def456", "children": [] }
+            ]}}}`,
+		`{"data":{"createTopic":{"name":"NewTopic","id":"zzzNewTopic","description":""}}}`,
+		`{"data":{"createTopic":{"name":"NewSubTopic","id":"zzzNewSub","description":""}}}`,
+	}
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "POST")
+		_, err := ioutil.ReadAll(r.Body)
+		assert.NoError(t, err)
+		_, err = io.WriteString(w, expectedResponses[callNbr])
+		assert.NoError(t, err)
+		callNbr++
+	})
+
+	// srv is the test server that will serve the endpoints
+	srv := httptest.NewServer(mux)
+	defer srv.Close()
+	apiEndpoint = srv.URL
+
+	c := NewClient(&http.Client{}, "dummy_token")
+
+	want := "zzzNewSub"
+
+	got, err := c.Topic.AutoGenerate("Engineering/NewTopic/NewSubTopic", "/")
+	if err != nil {
+		t.Errorf("Expecting no error, got: %v", err)
+	}
+	if got != want {
+		t.Errorf("List returned: %s\nwant %s", got, want)
 	}
 }
