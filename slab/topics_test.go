@@ -21,6 +21,58 @@ func TestTopicService_List(t *testing.T) {
 			ID: "abc123", Hierarchy: &[]string{"efg234.abc123"}, Ancestors: &[]Topic{{ID: "efg234"}},
 			Description: "Description of topic A.", InsertedAt: insertDate, UpdatedAt: updateDate,
 			Name: "Topic A", Parent: &Topic{ID: "efg234"}, Children: &[]Topic{{ID: "zzzblabla"}},
+		},
+		{
+			ID: "zzzblabla", Hierarchy: &[]string{"efg234.abc123.zzzblabla"},
+			Ancestors:   &[]Topic{{ID: "abc123"}, {ID: "efg234"}},
+			Description: "Description of topic B.", InsertedAt: insertDate, UpdatedAt: updateDate,
+			Name: "Topic B", Parent: &Topic{ID: "abc123"}, Children: &[]Topic{},
+		},
+	}
+	expectedResp := `{"data":{"organization":{"topics": [
+                {
+                    "id": "abc123",
+                    "hierarchy": ["efg234.abc123"],
+				    "ancestors": [{"id":"efg234"}],
+                    "children": [{ "id": "zzzblabla"}],
+                    "description": "Description of topic A.",
+					"insertedAt": "2019-05-01T22:44:33.078957Z",
+					"updatedAt":"2019-06-18T22:40:16.733422Z",
+                    "name": "Topic A",
+                    "parent": {"id": "efg234"}
+                },
+                {
+                    "ancestors": [ { "id": "abc123" }, { "id": "efg234" } ],
+                    "children": [],
+                    "description": "Description of topic B.",
+                    "hierarchy": [ "efg234.abc123.zzzblabla" ],
+                    "id": "zzzblabla",
+					"insertedAt": "2019-05-01T22:44:33.078957Z",
+					"updatedAt":"2019-06-18T22:40:16.733422Z",
+                    "name": "Topic B",
+                    "parent": { "id": "abc123" }
+                }
+            ]}}}`
+	c, _, teardown := setup(t, expectedResp)
+	defer teardown()
+
+	got, err := c.Topic.List()
+	if err != nil {
+		t.Errorf("Expecting no error, got: %v", err)
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("List returned: %#v\nwant %#v", got, want)
+	}
+}
+
+func TestTopicService_ListWithPosts(t *testing.T) {
+	insertDate := &DateTime{time.Date(2019, time.May, 1, 22, 44, 33, 78957000, time.UTC)}
+	updateDate := &DateTime{time.Date(2019, time.June, 18, 22, 40, 16, 733422000, time.UTC)}
+	want := &[]Topic{
+		{
+			ID: "abc123", Hierarchy: &[]string{"efg234.abc123"}, Ancestors: &[]Topic{{ID: "efg234"}},
+			Description: "Description of topic A.", InsertedAt: insertDate, UpdatedAt: updateDate,
+			Name: "Topic A", Parent: &Topic{ID: "efg234"}, Children: &[]Topic{{ID: "zzzblabla"}},
 			Posts: &[]Post{{ID: "postid1", Title: "Post 1 from topic A"}, {ID: "postid2", Title: "Post 2 from topic A"}},
 		},
 		{
@@ -66,7 +118,7 @@ func TestTopicService_List(t *testing.T) {
 	c, _, teardown := setup(t, expectedResp)
 	defer teardown()
 
-	got, err := c.Topic.List()
+	got, err := c.Topic.ListWithPosts()
 	if err != nil {
 		t.Errorf("Expecting no error, got: %v", err)
 	}

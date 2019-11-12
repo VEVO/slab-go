@@ -22,24 +22,51 @@ type Topic struct {
 	UpdatedAt   *DateTime `json:"updatedAt,omitempty"`
 }
 
-// List retrieves all the cwtopicsposts available in the organization including their details
+// List retrieves all the topics available in the organization including their details
 func (t *TopicService) List() (*[]Topic, error) {
 	query := `{
-        organization {
-            topics{
-                id,
-                name,
-                description,
+		organization {
+			topics{
+				id,
+				name,
+				description,
+				hierarchy,
+				parent{id},
+				ancestors{id},
+				children{id},
+				insertedAt,
+				updatedAt
+			}
+		}
+	}`
+	var resp struct {
+		Organization *Organization `json:"organization"`
+	}
+	err := t.client.Do(context.Background(), query, nil, &resp)
+	if resp.Organization != nil {
+		return resp.Organization.Topics, err
+	}
+	return nil, err
+}
+
+// ListWithPosts retrieves all the topics available including the ID and the title of the posts they contain in the organization including their details
+func (t *TopicService) ListWithPosts() (*[]Topic, error) {
+	query := `{
+		organization {
+			topics{
+				id,
+				name,
+				description,
 				posts{id, title},
 				hierarchy,
 				parent{id},
 				ancestors{id},
 				children{id},
-                insertedAt,
-                updatedAt
-            }
-        }
-    }`
+				insertedAt,
+				updatedAt
+			}
+		}
+	}`
 	var resp struct {
 		Organization *Organization `json:"organization"`
 	}
@@ -53,20 +80,20 @@ func (t *TopicService) List() (*[]Topic, error) {
 // Get retrieves the details of a specific topic
 func (t *TopicService) Get(id string) (*Topic, error) {
 	query := `
-    query ($id: ID){
-        topic(id: $id){
-                id,
-                name,
-                description,
-				posts{id, title},
-				hierarchy,
-				parent{id},
-				ancestors{id},
-				children{id},
-                insertedAt,
-                updatedAt
-        }
-    }`
+	query ($id: ID){
+		topic(id: $id){
+			id,
+			name,
+			description,
+			posts{id, title},
+			hierarchy,
+			parent{id},
+			ancestors{id},
+			children{id},
+			insertedAt,
+			updatedAt
+		}
+	}`
 	var resp struct {
 		Topic *Topic `json:"topic"`
 	}
