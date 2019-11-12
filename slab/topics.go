@@ -44,7 +44,10 @@ func (t *TopicService) List() (*[]Topic, error) {
 		Organization *Organization `json:"organization"`
 	}
 	err := t.client.Do(context.Background(), query, nil, &resp)
-	return resp.Organization.Topics, err
+	if resp.Organization != nil {
+		return resp.Organization.Topics, err
+	}
+	return nil, err
 }
 
 // Get retrieves the details of a specific topic
