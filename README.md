@@ -1,6 +1,8 @@
 # slab-go
 
-[![GoDoc](https://godoc.org/github.com/VEVO/slab-go/slab?status.svg)](https://godoc.org/github.com/VEVO/slab-go/slab) [![Build Status](https://travis-ci.org/VEVO/slab-go.svg?branch=master)](https://travis-ci.org/VEVO/slab-go)[![Test Coverage](https://codecov.io/gh/VEVO/slab-go/branch/master/graph/badge.svg)](https://codecov.io/gh/VEVO/slab-go)
+[![GoDoc](https://godoc.org/github.com/VEVO/slab-go/slab?status.svg)](https://godoc.org/github.com/VEVO/slab-go/slab)
+[![Test Status](https://github.com/VEVO/slab-go/workflows/tests/badge.svg)](https://github.com/VEVO/slab-go/actions?query=workflow%3Atests)
+[![Go Report Card](https://goreportcard.com/badge/github.com/VEVO/slab-go)](https://goreportcard.com/report/github.com/VEVO/slab-go)
 
 slab-go is a Go client library for accessing the [slab.com API](https://the.slab.com/public/slab-api-vk0o0i33).
 
